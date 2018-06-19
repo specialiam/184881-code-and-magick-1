@@ -1,5 +1,5 @@
 'use strict';
-
+// Вспомогательные функции
 (function () {
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
