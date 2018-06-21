@@ -25,7 +25,7 @@
     ctx.fillText('Ура вы победили!', CLOUD_X + FONT_GAP, CLOUD_Y + 1.5 * FONT_GAP);
     ctx.fillText('Список результатов:', CLOUD_X + FONT_GAP, CLOUD_Y + 2.5 * FONT_GAP);
 
-    var maxTime = window.utils.colorgetMaxElement(times);
+    var maxTime = window.utils.getMaxElement(times);
 
     for (var i = 0; i < players.length; i++) {
       var currentBarHeight = (BAR_HEIGHT * times[i]) / maxTime;
@@ -33,7 +33,7 @@
       if (players[i] === 'Вы') {
         ctx.fillStyle = 'rgba(255,0,0,1)';
       } else {
-        ctx.fillStyle = 'rgba(0,0,' + window.utils.colorgetRandomInt(100, 255) + ',1)';
+        ctx.fillStyle = 'rgba(0,0,' + window.utils.getRandomInt(100, 255) + ',1)';
       }
       ctx.fillRect(CLOUD_X + FONT_GAP + GAP + ((BAR_GAP + BAR_WIDTH) * i), CLOUD_HEIGHT - currentBarHeight - FONT_GAP, BAR_WIDTH, currentBarHeight);
       ctx.fillStyle = '#000';

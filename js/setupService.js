@@ -1,6 +1,12 @@
 'use strict';
 
 (function () {
+  var form = document.querySelector('.setup-wizard-form');
+
+  form.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(form), closePopup, onError);
+    evt.preventDefault();
+  });
 
   var userDialog = document.querySelector('.setup');
   userDialog.querySelector('.setup-similar').classList.remove('hidden');
@@ -49,6 +55,18 @@
     if (window.utils.isEscPressed(evt)) {
       closePopup();
     }
+  }
+
+  function onError(errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red; paddong: 50px;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
   }
 })();
 
