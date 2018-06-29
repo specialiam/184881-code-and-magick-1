@@ -3,20 +3,52 @@
 (function () {
   var WIZARDS_QUANTITY = 4;
   var userDialog = document.querySelector('.setup');
-  var similarListElement = userDialog.querySelector('.setup-similar-list');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
+  var similar = userDialog.querySelector('.setup-similar');
+  var similarList = userDialog.querySelector('.setup-similar-list');
+  var coatColor;
+  var eyesColor;
+  var wizards = [];
 
-  window.backend.load(onWizardLoad, onError);
+  window.wizard.onEyesChange = window.debounce(function (color) {
+    eyesColor = color;
+    updateWizards();
+  });
 
-  function onWizardLoad(wizards) {
-    var fragment = document.createDocumentFragment();
+  window.wizard.onCoatChange = window.debounce(function (color) {
+    coatColor = color;
+    updateWizards();
+  });
 
-    for (var i = 0; i < WIZARDS_QUANTITY; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+  window.backend.load(successHandler, onError);
+
+  function getRank(wizard) {
+    var rank = 0;
+
+    if (wizard.colorCoat === coatColor) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === eyesColor) {
+      rank += 1;
     }
 
-    similarListElement.appendChild(fragment);
-    userDialog.querySelector('.setup-similar').classList.remove('hidden');
+    return rank;
+  }
+
+  function updateWizards() {
+    renderWizards(wizards.slice().
+      sort(function (left, right) {
+        var rankDiff = getRank(right) - getRank(left);
+        if (rankDiff === 0) {
+          rankDiff = wizards.indexOf(left) - wizards.indexOf(right);
+        }
+        return rankDiff;
+      }));
+  }
+
+  function successHandler(data) {
+    wizards = data;
+    updateWizards();
   }
 
   function renderWizard(wizard) {
@@ -27,6 +59,16 @@
     wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
 
     return wizardElement;
+  }
+
+  function renderWizards(data) {
+    var takeNumber = data.length > WIZARDS_QUANTITY ? WIZARDS_QUANTITY : data.length;
+    similarList.innerHTML = '';
+    for (var i = 0; i < takeNumber; i++) {
+      similarList.appendChild(renderWizard(data[i]));
+    }
+
+    similar.classList.remove('hidden');
   }
 
   function onError(errorMessage) {
